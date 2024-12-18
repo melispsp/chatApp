@@ -16,8 +16,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.red,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 27, 35, 48),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 25, 32, 45),
         hintColor: Colors.red,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.white),
+          bodyMedium: TextStyle(color: Colors.white70),
+        ),
       ),
       home: const LoginPage(),
     );
@@ -34,12 +38,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
+  bool _isPasswordVisible = false;
   void _login() {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
-    if (email == '232201065@ogrenci.amasya.edu.tr' && password == '1234') {
+    if (email == 'test' && password == 'test') {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const GroupListPage()),
@@ -75,10 +79,14 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/images/logo.jpeg',
-                  width: 120.0,
-                  height: 120.0,
+                ClipOval(
+                  child: Image.asset(
+                    'assets/images/logo.jpeg',
+                    width: 120.0,
+                    height: 120.0,
+                    fit: BoxFit
+                        .cover, // Resmin kesilmeden tamamen kapsayacak şekilde sığmasını sağlar
+                  ),
                 ),
                 const SizedBox(height: 40.0),
 
@@ -86,8 +94,15 @@ class _LoginPageState extends State<LoginPage> {
                 Container(
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 22, 22, 34),
-                    borderRadius: BorderRadius.circular(10.0),
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color.fromARGB(255, 12, 10, 30),
+                        const Color.fromARGB(255, 9, 9, 81)
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(15.0),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.6),
@@ -122,6 +137,8 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(12.0),
                             borderSide: BorderSide.none,
                           ),
+                          prefixIcon:
+                              const Icon(Icons.email, color: Colors.white),
                         ),
                         keyboardType: TextInputType.emailAddress,
                       ),
@@ -130,7 +147,8 @@ class _LoginPageState extends State<LoginPage> {
                       // Şifre Giriş Alanı
                       TextField(
                         controller: _passwordController,
-                        obscureText: true,
+                        obscureText:
+                            !_isPasswordVisible, // Şifre görünürlüğünü kontrol et
                         style: const TextStyle(color: Colors.white),
                         decoration: InputDecoration(
                           labelText: 'Şifre',
@@ -140,6 +158,21 @@ class _LoginPageState extends State<LoginPage> {
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12.0),
                             borderSide: BorderSide.none,
+                          ),
+                          prefixIcon:
+                              const Icon(Icons.lock, color: Colors.white),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
                           ),
                         ),
                       ),

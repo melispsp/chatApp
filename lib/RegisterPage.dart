@@ -1,4 +1,3 @@
-// ignore_for_file: unused_import
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
 
@@ -16,6 +15,8 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordConfirmController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>(); // Form için GlobalKey tanımlandı
+  bool _isPasswordVisible = false; // Şifre görünürlük kontrolü
+  bool _isConfirmPasswordVisible = false; // Şifre tekrar görünürlük kontrolü
 
   // Kayıt işlemi fonksiyonu
   void _register() {
@@ -44,8 +45,15 @@ class _RegisterPageState extends State<RegisterPage> {
                   Container(
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 22, 22, 34),
-                      borderRadius: BorderRadius.circular(10.0),
+                      gradient: LinearGradient(
+                        colors: [
+                          const Color.fromARGB(255, 12, 10, 30),
+                          const Color.fromARGB(255, 9, 9, 81)
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(15.0),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.6),
@@ -80,6 +88,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               borderRadius: BorderRadius.circular(12.0),
                               borderSide: BorderSide.none,
                             ),
+                            prefixIcon: const Icon(Icons.person,
+                                color: Colors.white), // İkon ekledim
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -103,6 +113,8 @@ class _RegisterPageState extends State<RegisterPage> {
                               borderRadius: BorderRadius.circular(12.0),
                               borderSide: BorderSide.none,
                             ),
+                            prefixIcon: const Icon(Icons.email,
+                                color: Colors.white), // İkon ekledim
                           ),
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
@@ -122,7 +134,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         // Şifre Alanı
                         TextFormField(
                           controller: _passwordController,
-                          obscureText: true,
+                          obscureText:
+                              !_isPasswordVisible, // Şifre görünürlük kontrolü
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             labelText: 'Şifre',
@@ -132,6 +145,21 @@ class _RegisterPageState extends State<RegisterPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                               borderSide: BorderSide.none,
+                            ),
+                            prefixIcon: const Icon(Icons.lock,
+                                color: Colors.white), // İkon ekledim
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
                             ),
                           ),
                           validator: (value) {
@@ -149,7 +177,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         // Şifre Tekrar Alanı
                         TextFormField(
                           controller: _passwordConfirmController,
-                          obscureText: true,
+                          obscureText:
+                              !_isConfirmPasswordVisible, // Şifre tekrar görünürlük kontrolü
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             labelText: 'Şifre Tekrar',
@@ -159,6 +188,22 @@ class _RegisterPageState extends State<RegisterPage> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12.0),
                               borderSide: BorderSide.none,
+                            ),
+                            prefixIcon: const Icon(Icons.lock,
+                                color: Colors.white), // İkon ekledim
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isConfirmPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.white,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible;
+                                });
+                              },
                             ),
                           ),
                           validator: (value) {
@@ -192,7 +237,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           onPressed: () => Navigator.pop(context),
                           child: const Text(
                             'Geri Dön',
-                            style: TextStyle(color: Colors.redAccent),
+                            style: TextStyle(color: Colors.red),
                           ),
                         ),
                       ],

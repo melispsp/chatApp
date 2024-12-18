@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
 import 'AddGroupPage.dart';
+import 'ResetPasswordPage.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -21,6 +22,99 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Sohbet Ekranı
+class ChatPage extends StatefulWidget {
+  final String groupName;
+
+  const ChatPage({super.key, required this.groupName});
+
+  @override
+  _ChatPageState createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  List<String> messages = [];
+  TextEditingController messageController = TextEditingController();
+
+  // Mesaj gönderme fonksiyonu
+  void sendMessage() {
+    if (messageController.text.isNotEmpty) {
+      setState(() {
+        messages.add(messageController.text);
+      });
+      messageController.clear();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('${widget.groupName} '),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: messages.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 4.0, horizontal: 8.0),
+                  child: Align(
+                    alignment:
+                        Alignment.centerRight, // Mesajı sağa hizalamak için
+                    child: Container(
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(
+                            255, 209, 17, 17), // Mesaj balonunun rengi
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Text(
+                        messages[index],
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 16.0),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: messageController,
+                    style: const TextStyle(color: Colors.black),
+                    decoration: const InputDecoration(
+                      hintText: 'Mesaj...',
+                      hintStyle: TextStyle(color: Colors.black54),
+                      filled: true,
+                      fillColor: Color.fromARGB(255, 215, 215, 215),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                      ),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.send,
+                      color: Color.fromARGB(255, 255, 0, 34)),
+                  onPressed: sendMessage,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 // Grup Listesi Ekranı
 class GroupListPage extends StatefulWidget {
   const GroupListPage({super.key});
@@ -34,12 +128,10 @@ class _GroupListPageState extends State<GroupListPage> {
 
   // Sekmelere göre görüntülenecek sayfalar
   final List<Widget> _pages = [
-    Center(
-        child: Text('Profil Sayfası', style: TextStyle(color: Colors.white))),
-    GroupListPageContent(), // Grup listesi burada ayrı bir widget olarak tanımlandı
-    ClubsPageContent(),
-    Center(
-        child: Text('Ayarlar Sayfası', style: TextStyle(color: Colors.white))),
+    ProfilePage(), // Profil listesi ayrı bir widget
+    GroupListPageContent(), // Grup listesi ayrı bir widget
+    ClubsPageContent(), // Klüp listesi ayrı bir widget
+    SettingsPage(), // Ayarlar listesi ayrı bir widget
   ];
 
   @override
@@ -74,7 +166,7 @@ class _GroupListPageState extends State<GroupListPage> {
                   Row(
                     children: [
                       Image.asset(
-                        'assets/images/user.png',
+                        'assets/images/logo.jpeg',
                         width: 65.0,
                         height: 65.0,
                       ),
@@ -105,7 +197,30 @@ class _GroupListPageState extends State<GroupListPage> {
               leading: const Icon(Icons.settings),
               title: const Text('Ayarlar'),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.newspaper),
+              title: const Text('Haberler'),
+              onTap: () {
+                // Navigator.pushReplacement(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const NewsPage()),
+                // );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.announcement_outlined),
+              title: const Text('Duyurular'),
+              onTap: () {
+                // Navigator.pushReplacement(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => const AnnouncementPage()),
+                // );
               },
             ),
             ListTile(
@@ -262,6 +377,286 @@ class _ClubsPageContentState extends State<ClubsPageContent> {
   }
 }
 
+//Profil sayfası
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profil'),
+        backgroundColor: Colors.red,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Profil Resmi
+            Center(
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundImage: const AssetImage('assets/images/user.png'),
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: IconButton(
+                        icon: const Icon(Icons.camera_alt, color: Colors.white),
+                        onPressed: () {
+                          // Profil resmi ekleme işlemi
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20.0),
+
+            // Ad Soyad (Değiştirilemez)
+            const Text(
+              "Ad Soyad:",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white70,
+              ),
+            ),
+            const Text(
+              "Melisa Köklü",
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+            const Divider(color: Colors.white54),
+
+            // Mail Adresi (Değiştirilemez)
+            const Text(
+              "Mail Adresi:",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white70,
+              ),
+            ),
+            const Text(
+              "232201065@ogrenci.amasya.edu.tr",
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+            const Divider(color: Colors.white54),
+
+            // Şifre Değiştirme
+            ListTile(
+              leading: const Icon(Icons.lock, color: Colors.red),
+              title: const Text("Şifreyi Değiştir",
+                  style: TextStyle(color: Colors.white)),
+              trailing: const Icon(Icons.arrow_forward_ios,
+                  color: Colors.white70, size: 16),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ResetPasswordPage()),
+                );
+                // Şifre değiştirme işlemi
+              },
+            ),
+            const Divider(color: Colors.white54),
+
+            // Biyografi Alanı
+            const Text(
+              "Biyografi:",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white70,
+              ),
+            ),
+            TextField(
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: "Buraya bir açıklama ekleyin...",
+                hintStyle: const TextStyle(color: Colors.white54),
+                filled: true,
+                fillColor: Colors.grey[850],
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              style: const TextStyle(color: Colors.white),
+            ),
+            const Spacer(),
+
+            // Kaydet Butonu
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  // Değişiklikleri kaydetme işlemi
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: const Text(
+                  "Değişiklikleri Kaydet",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: const Color(0xFF1E1E2C),
+    );
+  }
+}
+
+//Ayarlar listesi içeriği
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
+  @override
+  _SettingsPageState createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  bool _notificationsEnabled = true;
+  bool _darkTheme = false;
+  String _language = 'Türkçe';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Ayarlar'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            // Dil Seçimi
+            ListTile(
+              title: const Text('Dil Seçimi'),
+              subtitle: Text(_language),
+              trailing: const Icon(Icons.arrow_forward_ios),
+              onTap: () {
+                // Dil seçimi yapılacak
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Dil Seçimi'),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          ListTile(
+                            title: Text('Türkçe'),
+                          ),
+                          ListTile(
+                            title: Text('English'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            const Divider(),
+
+            // Bildirimler
+            SwitchListTile(
+              title: const Text('Bildirimler'),
+              subtitle: const Text('Bildirimleri aç/kapat'),
+              value: _notificationsEnabled,
+              onChanged: (bool value) {
+                setState(() {
+                  _notificationsEnabled = value;
+                });
+              },
+            ),
+            const Divider(),
+
+            // Tema Seçimi
+            SwitchListTile(
+              title: const Text('Karanlık Mod'),
+              subtitle: const Text('Karanlık modu aç/kapat'),
+              value: _darkTheme,
+              onChanged: (bool value) {
+                setState(() {
+                  _darkTheme = value;
+                });
+              },
+            ),
+            const Divider(),
+
+            // Yedekleme ve Senkronizasyon
+            ListTile(
+              title: const Text('Veri Yedekleme ve Senkronizasyon'),
+              trailing: const Icon(Icons.cloud_sync),
+              onTap: () {
+                // Yedekleme işlemi yapılacak
+              },
+            ),
+            const Divider(),
+
+            // Hesap Yönetimi
+            ListTile(
+              title: const Text('Hesap Yönetimi'),
+              trailing: const Icon(Icons.person),
+              onTap: () {
+                // Hesap yönetimi (Çıkış yap, hesap sil) sayfasına yönlendirebilirsiniz
+              },
+            ),
+            const Divider(),
+
+            // Sohbet Ayarları
+            ListTile(
+              title: const Text('Sohbet Ayarları'),
+              trailing: const Icon(Icons.chat_bubble),
+              onTap: () {
+                // Sohbet arka planı değiştirilebilir
+              },
+            ),
+            const Divider(),
+
+            // Yardım ve Destek
+            ListTile(
+              title: const Text('Yardım ve Destek'),
+              trailing: const Icon(Icons.help),
+              onTap: () {
+                // Yardım ve destek sayfasına yönlendirilebilir
+              },
+            ),
+            const Divider(),
+
+            // Uygulama Sürümü
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Text(
+                'Uygulama Sürümü: 1.0.0',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 // Grup Listesi İçeriği
 class GroupListPageContent extends StatelessWidget {
   final Map<String, List<String>> groups = const {
@@ -310,98 +705,6 @@ class GroupListPageContent extends StatelessWidget {
           }).toList(),
         );
       }).toList(),
-    );
-  }
-}
-
-// Sohbet Ekranı
-class ChatPage extends StatefulWidget {
-  final String groupName;
-
-  const ChatPage({super.key, required this.groupName});
-
-  @override
-  _ChatPageState createState() => _ChatPageState();
-}
-
-class _ChatPageState extends State<ChatPage> {
-  List<String> messages = [];
-  TextEditingController messageController = TextEditingController();
-
-  // Mesaj gönderme fonksiyonu
-  void sendMessage() {
-    if (messageController.text.isNotEmpty) {
-      setState(() {
-        messages.add(messageController.text);
-      });
-      messageController.clear();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('${widget.groupName} '),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 4.0, horizontal: 8.0),
-                  child: Align(
-                    alignment:
-                        Alignment.centerRight, // Mesajı sağa hizalamak için
-                    child: Container(
-                      padding: const EdgeInsets.all(12.0),
-                      decoration: BoxDecoration(
-                        color: Colors.redAccent, // Mesaj balonunun rengi
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Text(
-                        messages[index],
-                        style: const TextStyle(
-                            color: Colors.white, fontSize: 16.0),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: messageController,
-                    style: const TextStyle(color: Colors.black),
-                    decoration: const InputDecoration(
-                      hintText: 'Mesajınızı yazın...',
-                      hintStyle: TextStyle(color: Colors.black54),
-                      filled: true,
-                      fillColor: Color.fromARGB(255, 215, 215, 215),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(16.0)),
-                      ),
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send,
-                      color: Color.fromARGB(255, 255, 0, 34)),
-                  onPressed: sendMessage,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
