@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'LoginPage.dart';
 import 'AddGroupPage.dart';
 import 'ResetPasswordPage.dart';
+import 'SettingsPage.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Amasya Üniversitesi',
       theme: ThemeData.dark().copyWith(
         primaryColor: Colors.red,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 21, 28, 39),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 21, 28, 40),
       ),
       home:
           const GroupListPage(), // Ana sayfa olarak GroupListPage'i belirledim
@@ -30,6 +31,16 @@ class ChatPage extends StatefulWidget {
 
   @override
   _ChatPageState createState() => _ChatPageState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(groupName),
+      ),
+      body: Center(
+        child: Text('Sohbet Sayfası: $groupName'),
+      ),
+    );
+  }
 }
 
 class _ChatPageState extends State<ChatPage> {
@@ -51,6 +62,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.groupName} '),
+        backgroundColor: Colors.redAccent,
       ),
       body: Column(
         children: [
@@ -82,6 +94,12 @@ class _ChatPageState extends State<ChatPage> {
               },
             ),
           ),
+          Divider(
+            color: Colors.black, // Çizgi rengi
+            thickness: 1, // Çizgi kalınlığı
+            indent: 1, // Başlangıç boşluğu
+            endIndent: 1, // Bitiş boşluğu
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -92,12 +110,15 @@ class _ChatPageState extends State<ChatPage> {
                     style: const TextStyle(color: Colors.black),
                     decoration: const InputDecoration(
                       hintText: 'Mesaj...',
-                      hintStyle: TextStyle(color: Colors.black54),
+                      hintStyle: TextStyle(color: Colors.white),
                       filled: true,
-                      fillColor: Color.fromARGB(255, 215, 215, 215),
+                      fillColor: Color.fromARGB(65, 163, 163, 163),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(16.0)),
+                        borderSide: BorderSide.none,
                       ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 12, horizontal: 16),
                     ),
                   ),
                 ),
@@ -131,7 +152,10 @@ class _GroupListPageState extends State<GroupListPage> {
     ProfilePage(), // Profil listesi ayrı bir widget
     GroupListPageContent(), // Grup listesi ayrı bir widget
     ClubsPageContent(), // Klüp listesi ayrı bir widget
-    SettingsPage(), // Ayarlar listesi ayrı bir widget
+    SettingsPage(
+      darkTheme: true,
+      onThemeChanged: (bool value) {},
+    ), // Ayarlar listesi ayrı bir widget
   ];
 
   @override
@@ -156,7 +180,7 @@ class _GroupListPageState extends State<GroupListPage> {
           children: [
             DrawerHeader(
               decoration: const BoxDecoration(
-                color: Colors.red,
+                color: Color.fromARGB(255, 255, 17, 0),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,7 +223,12 @@ class _GroupListPageState extends State<GroupListPage> {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                  MaterialPageRoute(
+                    builder: (context) => SettingsPage(
+                      darkTheme: true,
+                      onThemeChanged: (bool value) {},
+                    ),
+                  ),
                 );
               },
             ),
@@ -305,39 +334,71 @@ class _ClubsPageContentState extends State<ClubsPageContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Kulüp Listesi
+            const Text(
+              'Kulüpler',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Kulüp Kartları
             Expanded(
               child: ListView.builder(
                 itemCount: visibleClubsCount,
                 itemBuilder: (context, index) {
                   final club = allClubs[index];
-                  return ListTile(
-                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0),
-                    leading: CircleAvatar(
-                      backgroundImage: AssetImage(club['image']!),
-                      radius: 30,
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    title: Text(
-                      club['name']!,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    trailing: ElevatedButton(
-                      onPressed: () {
-                        setState(() {
-                          followStatus[index] = !followStatus[index];
-                        });
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: followStatus[index]
-                            ? const Color.fromARGB(255, 90, 10, 10)
-                            : Colors.red,
-                      ),
-                      child: Text(
-                        followStatus[index] ? 'Takip Ediliyor' : 'Takip Et',
-                        style: const TextStyle(color: Colors.white),
+                    elevation: 5,
+                    color: const Color.fromARGB(38, 176, 176, 176),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: AssetImage(club['image']!),
+                            radius: 30,
+                          ),
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: Text(
+                              club['name']!,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                followStatus[index] = !followStatus[index];
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: followStatus[index]
+                                  ? const Color.fromARGB(255, 150, 0, 0)
+                                  : Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              followStatus[index]
+                                  ? 'Takip Ediliyor'
+                                  : 'Takip Et',
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -350,7 +411,7 @@ class _ClubsPageContentState extends State<ClubsPageContent> {
               child: GestureDetector(
                 onTap: () {
                   setState(() {
-                    // Kulüp sayısını tüm listeye genişlet
+                    // Kulüp sayısını tüm listeye genişlet veya küçült
                     if (visibleClubsCount < allClubs.length) {
                       visibleClubsCount = allClubs.length;
                     } else {
@@ -363,9 +424,9 @@ class _ClubsPageContentState extends State<ClubsPageContent> {
                       ? 'Daha Fazla Kulüp'
                       : 'Daha Az Göster',
                   style: const TextStyle(
-                    color: Colors.redAccent,
+                    color: Color.fromARGB(221, 255, 255, 255),
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 15,
                   ),
                 ),
               ),
@@ -386,7 +447,7 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profil'),
-        backgroundColor: Colors.red,
+        backgroundColor: const Color.fromARGB(255, 12, 17, 25),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -516,196 +577,177 @@ class ProfilePage extends StatelessWidget {
           ],
         ),
       ),
-      backgroundColor: const Color(0xFF1E1E2C),
-    );
-  }
-}
-
-//Ayarlar listesi içeriği
-class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
-
-  @override
-  _SettingsPageState createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends State<SettingsPage> {
-  bool _notificationsEnabled = true;
-  bool _darkTheme = false;
-  String _language = 'Türkçe';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ayarlar'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            // Dil Seçimi
-            ListTile(
-              title: const Text('Dil Seçimi'),
-              subtitle: Text(_language),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () {
-                // Dil seçimi yapılacak
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Dil Seçimi'),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          ListTile(
-                            title: Text('Türkçe'),
-                          ),
-                          ListTile(
-                            title: Text('English'),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-            const Divider(),
-
-            // Bildirimler
-            SwitchListTile(
-              title: const Text('Bildirimler'),
-              subtitle: const Text('Bildirimleri aç/kapat'),
-              value: _notificationsEnabled,
-              onChanged: (bool value) {
-                setState(() {
-                  _notificationsEnabled = value;
-                });
-              },
-            ),
-            const Divider(),
-
-            // Tema Seçimi
-            SwitchListTile(
-              title: const Text('Karanlık Mod'),
-              subtitle: const Text('Karanlık modu aç/kapat'),
-              value: _darkTheme,
-              onChanged: (bool value) {
-                setState(() {
-                  _darkTheme = value;
-                });
-              },
-            ),
-            const Divider(),
-
-            // Yedekleme ve Senkronizasyon
-            ListTile(
-              title: const Text('Veri Yedekleme ve Senkronizasyon'),
-              trailing: const Icon(Icons.cloud_sync),
-              onTap: () {
-                // Yedekleme işlemi yapılacak
-              },
-            ),
-            const Divider(),
-
-            // Hesap Yönetimi
-            ListTile(
-              title: const Text('Hesap Yönetimi'),
-              trailing: const Icon(Icons.person),
-              onTap: () {
-                // Hesap yönetimi (Çıkış yap, hesap sil) sayfasına yönlendirebilirsiniz
-              },
-            ),
-            const Divider(),
-
-            // Sohbet Ayarları
-            ListTile(
-              title: const Text('Sohbet Ayarları'),
-              trailing: const Icon(Icons.chat_bubble),
-              onTap: () {
-                // Sohbet arka planı değiştirilebilir
-              },
-            ),
-            const Divider(),
-
-            // Yardım ve Destek
-            ListTile(
-              title: const Text('Yardım ve Destek'),
-              trailing: const Icon(Icons.help),
-              onTap: () {
-                // Yardım ve destek sayfasına yönlendirilebilir
-              },
-            ),
-            const Divider(),
-
-            // Uygulama Sürümü
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                'Uygulama Sürümü: 1.0.0',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      backgroundColor: const Color.fromARGB(255, 20, 35, 60),
     );
   }
 }
 
 // Grup Listesi İçeriği
-class GroupListPageContent extends StatelessWidget {
-  final Map<String, List<String>> groups = const {
+class GroupListPageContent extends StatefulWidget {
+  const GroupListPageContent({super.key});
+
+  @override
+  State<GroupListPageContent> createState() => _GroupListPageContentState();
+}
+
+class _GroupListPageContentState extends State<GroupListPageContent> {
+  final Map<String, dynamic> groups = {
     'Yerleşkeler': [
-      'Yeşilırmak Yerleşkesi',
-      'Milli Hakimiyet Yerleşkesi',
-      'İpekköy Yerleşkesi'
+      {
+        'name': 'Yeşilırmak Yerleşkesi',
+        'image': 'assets/logo.jpeg',
+        'children': [],
+      },
+      {
+        'name': 'Milli Hakimiyet Yerleşkesi',
+        'image': 'assets/logo.jpeg',
+        'children': [],
+      },
+      {
+        'name': 'İpekköy Yerleşkesi',
+        'image': 'assets/logo.jpeg',
+        'children': [],
+      },
     ],
     'Fakülteler': [
-      'Mühendislik Fakültesi',
-      'Eğitim Fakültesi',
-      'Fen Edebiyat Fakültesi'
+      {
+        'name': 'Mühendislik Fakültesi',
+        'image': 'assets/logo.jpeg',
+        'children': [], // Children eklendi
+      },
+      {
+        'name': 'Eğitim Fakültesi',
+        'image': 'assets/logo.jpeg',
+        'children': [], // Children eklendi
+      },
+      {
+        'name': 'Fen Edebiyat Fakültesi',
+        'image': 'assets/logo.jpeg',
+        'children': [], // Children eklendi
+      },
     ],
-    'Bölümler': ['Bilgisayar Mühendisliği', 'Makine Mühendisliği']
+    'Bölümler': [
+      {
+        'name': 'Mühendislik',
+        'image': 'assets/logo.jpeg',
+        'children': [
+          {
+            'name': 'Bilgisayar Mühendisliği',
+            'image': 'assets/logo.jpeg',
+            'children': [],
+          },
+          {
+            'name': 'Makine Mühendisliği',
+            'image': 'assets/logo.jpeg',
+            'children': [],
+          },
+          {
+            'name': 'Elektrik-Elektronik Mühendisliği',
+            'image': 'assets/logo.jpeg',
+            'children': [],
+          },
+        ],
+      },
+      {
+        'name': 'Eğitim',
+        'image': 'assets/logo.jpeg',
+        'children': [], // Children eklendi
+      },
+      {
+        'name': 'Sağlık',
+        'image': 'assets/logo.jpeg',
+        'children': [], // Children eklendi
+      },
+    ],
   };
 
-  const GroupListPageContent({super.key});
+  final List<String> expandedItems = [];
+
+  void toggleExpand(String itemName) {
+    setState(() {
+      if (expandedItems.contains(itemName)) {
+        expandedItems.remove(itemName);
+      } else {
+        expandedItems.add(itemName);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListView(
+      padding: const EdgeInsets.all(8.0),
       children: groups.keys.map((category) {
-        return ExpansionTile(
-          leading: const Icon(Icons.group, color: Colors.redAccent),
-          title: Text(
-            category,
-            style: const TextStyle(color: Colors.white),
-          ),
-          children: groups[category]!.map((group) {
-            return ListTile(
-              leading: const Icon(Icons.group_outlined, color: Colors.grey),
-              title: Text(
-                group,
-                style: const TextStyle(color: Colors.white70),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              category,
+              style: const TextStyle(
+                fontSize: 19,
+                fontWeight: FontWeight.bold,
+                color: Colors.red,
               ),
-              onTap: () {
-                // Sohbet sayfasına yönlendirme
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatPage(groupName: group),
-                  ),
-                );
-              },
-            );
-          }).toList(),
+            ),
+            const SizedBox(height: 8),
+            ..._buildCategoryItems(context, groups[category] as List<dynamic>),
+          ],
         );
       }).toList(),
     );
+  }
+
+  List<Widget> _buildCategoryItems(BuildContext context, List<dynamic> items,
+      {int level = 0}) {
+    return items.map((item) {
+      final bool isExpanded = expandedItems.contains(item['name']);
+      final bool hasChildren = item['children'].isNotEmpty;
+
+      return Column(
+        children: [
+          ListTile(
+            leading: CircleAvatar(
+              backgroundImage: AssetImage(item['image']),
+              radius: 20,
+            ),
+            title: Padding(
+              padding: EdgeInsets.only(left: level * 16.0),
+              child: Text(
+                item['name'],
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            trailing: hasChildren
+                ? Icon(
+                    isExpanded ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.grey,
+                  )
+                : null,
+            onTap: () {
+              if (hasChildren) {
+                toggleExpand(item['name']);
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatPage(groupName: item['name']),
+                  ),
+                );
+              }
+            },
+          ),
+          if (isExpanded)
+            ..._buildCategoryItems(
+              context,
+              item['children'],
+              level: level + 1,
+            ),
+        ],
+      );
+    }).toList();
   }
 }
 

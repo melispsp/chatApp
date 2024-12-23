@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "5823254959",
+    "project_id": "chatappuniversity-e308e",
+    "storage_bucket": "chatappuniversity-e308e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5823254959:android:992897515b117b31d39f5a",
+        "android_client_info": {
+          "package_name": "com.example.deneme"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtVkbz_db1fXfWxfPPKeBffejeDOCxs4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

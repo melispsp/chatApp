@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.dark,
         primarySwatch: Colors.red,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 25, 32, 45),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 18, 30, 53),
         hintColor: Colors.red,
         textTheme: const TextTheme(
           bodyLarge: TextStyle(color: Colors.white),
@@ -96,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color.fromARGB(255, 12, 10, 30),
+                        const Color.fromARGB(255, 8, 10, 30),
                         const Color.fromARGB(255, 9, 9, 81)
                       ],
                       begin: Alignment.topLeft,
