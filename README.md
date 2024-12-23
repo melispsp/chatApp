@@ -1,6 +1,6 @@
-# chatapp_woutfirebase
+# chatapp_firebase
 
-A new Flutter project.
+its an app developed with flutter for Amasya University
 
 ## Getting Started
 
